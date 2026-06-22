@@ -1,0 +1,1 @@
+Backblaze B2 Client written in python. This project is still WIP and largely untested. I expect there are still errors to iron out.

@@ -1,0 +1,55 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release (without 'v' prefix, e.g., 0.1.0)"
+        required: true
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # need full history so we can push a tag
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Update version in pyproject.toml
+        run: |
+          sed -i 's/^version = ".*"/version = "${{ inputs.version }}"/' pyproject.toml
+          echo "--- pyproject.toml after sed ---"
+          head -10 pyproject.toml
+
+      - name: Build sdist and wheel
+        run: uv build
+
+      - name: Commit and tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add pyproject.toml
+          if git diff --staged --quiet; then
+            echo "No version change to commit"
+          else
+            git commit -m "Release v${{ inputs.version }}"
+            git push origin HEAD
+          fi
+          git tag "v${{ inputs.version }}"
+          git push origin "v${{ inputs.version }}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "v${{ inputs.version }}"
+          files: dist/*
+          generate_release_notes: true

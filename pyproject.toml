@@ -1,0 +1,36 @@
+[project]
+name = "b2py"
+description = "A Python client for Backblaze B2."
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "niquests"
+]
+
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+fix = true
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+future-annotations = true
+select = ["ALL"]
+ignore = [
+    "ANN401",
+    "ASYNC240",
+    "BLE001",
+    "COM812",
+    "D",
+    "FBT001",
+    "FBT002",
+    "PLR0913",
+    "S101",
+    "S324",
+]
+
+[tool.pyright]
+pythonVersion = "3.11"

@@ -1,0 +1,7 @@
+.vscode/
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+*.egg
+desktop.ini
